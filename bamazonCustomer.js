@@ -70,7 +70,7 @@ function bamazon() {
 
                         console.log("Suffiecient inventory of " + selectedItem[0].product_name + " to fill your order!");
 
-                        console.log("Total order: $" + (cart.quantity * selectedItem[0].price).toFixed(2));
+                        console.log("Total order: $ " + (cart.quantity * selectedItem[0].price).toFixed(2));
 
                         connection.query('UPDATE products SET stock_quantity=? WHERE id=?', [selectedItem[0].stock_quantity - quantity, itemID],
 
