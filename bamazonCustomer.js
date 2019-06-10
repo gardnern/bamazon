@@ -15,13 +15,11 @@ var connection = mysql.createConnection({
 connection.connect(function (err) {
     if (err) throw err;
     console.log("You are now connected " + connection.threadId);
-    //connection.end();
+   
+    bamazon();      
 
-    bamazon();      //Call main function
+});                 
 
-});                 // End Connection Script
-
-// BEGIN Display Inventory
 function bamazon() {
     connection.query('SELECT * FROM products', function (err, res) {
         if (err) throw err;
@@ -30,20 +28,20 @@ function bamazon() {
         var table = new Table(
             {
                 head: ["Product ID", "Product Name", "Department Name", "Price", "Quantity"],
-                colWidths: [12, 75, 20, 12, 12],
+                colWidths: [20, 30, 19, 12, 12],
+            },
+            { chars: {'mid': '', 'left-mid': '', 'mid-mid': '', 'mid-mid': '', 'right-mid': ''} 
             });
-
      
         for (var i = 0; i < res.length; i++) {
             table.push(
                 [res[i].item_id, res[i].product_name, res[i].department_name, parseFloat(res[i].price).toFixed(2), res[i].stock_quantity]
             );
         }
-
-        // console.log(table);
-        
-
-        // Prompt Customers Input
+        console.log(table.toString());
+        // Prompt users with two messages.
+        // * The first should ask them the ID of the product they would like to buy.
+        // * The second message should ask how many units of the product they would like to buy.
         inquirer.prompt([
             {
                 type: "number",
@@ -65,8 +63,7 @@ function bamazon() {
 
                 connection.query('SELECT * FROM products WHERE id=' + item_id, function (err, selectedItem) {
                     if (err) throw err;
-
-                    // Varify item quantity desired is in inventory
+                   
                     if (selectedItem[0].stock_quantity - quantity >= 0) {
 
                         console.log("Quantity in Stock: " + selectedItem[0].stock_quantity + " Order Quantity: " + quantity);
@@ -82,13 +79,10 @@ function bamazon() {
 
                                 bamazon();  
                             });  
-
                     }
-                    // Low inventory warning
                     else {
-                        console.log("INSUFFICIENT INVENTORY: " + selectedItem[0].stock_quantity + " " + selectedItem[0].product_name + " in stock. \nPlease make another selection or reduce your quantity.");
-
-                        bamazon();  
+                        console.log("Insufficient Inventory: " + selectedItem[0].stock_quantity + " " + selectedItem[0].product_name + " in stock. \nPlease make another selection or reduce your quantity.");
+                                bamazon();  
                     }
                 });
             });
